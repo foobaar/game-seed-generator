@@ -8,6 +8,7 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.processor.WallclockTimestampExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -21,6 +22,7 @@ import java.util.Map;
 @EnableKafkaStreams
 @EnableKafka
 public class GeneratorStream {
+    @Value("bootstrap.servers") private String bootStrap;
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public StreamsConfig kStreamsConfigs() {
         Map<String, Object> props = new HashMap<>();
@@ -28,13 +30,13 @@ public class GeneratorStream {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Integer().getClass().getName());
         props.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor.class.getName());
-        props.put("bootstrap.servers","localhost:9092");
+        props.put("bootstrap.servers", bootStrap);
         return new StreamsConfig(props);
     }
 
     @Bean
     public KStream<String, Integer> kStream(StreamsBuilder kStreamBuilder) {
-        KStream<String, Integer> stream = kStreamBuilder.stream("game-seed2");
+        KStream<String, Integer> stream = kStreamBuilder.stream("game-seed");
         stream.map((k, v) -> new KeyValue<>(k, v + 42))
                 .to("generated-value");
         return stream;
