@@ -22,7 +22,7 @@ import java.util.Map;
 @EnableKafkaStreams
 @EnableKafka
 public class GeneratorStream {
-    @Value("bootstrap.servers") private String bootStrap;
+    @Value("${bootstrap.servers}") private String bootStrap;
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public StreamsConfig kStreamsConfigs() {
         Map<String, Object> props = new HashMap<>();
